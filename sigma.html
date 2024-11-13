@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #e2f2fe;
+        text-align: center;
+      }
+      .grid-container {
+        height: 160px; /* グリッド表示エリアの高さを固定 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px; /* ボタンとの間隔を固定 */
+      }
+      .grid {
+        font-family: Arial;
+        font-size: 24px;
+        white-space: pre;
+        line-height: 1.5;
+      }
+      .label {
+        width: 35px;
+        margin: 0 4px;
+        -webkit-text-stroke: 0.5px #777;
+      }
+      button {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        /* ボタンの位置を固定 */
+        position: relative;
+        bottom: 0;
+      }
+      button:hover {
+        background-color: #1d4ed8;
+      }
+      .grid-row {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .symbol {
+        margin: 0 4px;
+        display: inline-block;
+        width: 35px; /* 記号の最小幅を固定 */
+        text-align: left;
+        font-weight: bold;
+      }
+      .orange {
+        color: orange;
+      }
+      .red {
+        color: red;
+        
+      }
+      .blue {
+        color: blue;
+      }
+      .green {
+        color: green;
+      }
+      .purple {
+        color: purple;
+      }
+      .yellow {
+        color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="grid-container">
+        <div id="gridDisplay" class="grid"></div>
+      </div>
+      <button onclick="regenerateGrid()">新しいパターンを生成</button>
+    </div>
+
+    <script>
+      function generateSymbolGrid() {
+        const symbols = ["◯", "☓", "▽", "▢"];
+        const labels = ["A", "B", "C", "D", "1", "2", "3", "4"];
+        const randomLabel = labels[Math.floor(Math.random() * labels.length)];
+
+        const patternType = Math.floor(Math.random() * 3);
+
+        const patterns = [
+          // 横並び
+          {
+            layout: [
+              [0, 1, 2, 3],
+              [0, 1, 2, 3],
+            ],
+            labelPosition: "left",
+          },
+          // 縦並び
+          {
+            layout: [
+              [3, 2, 1, 0],
+              [3, 2, 1, 0],
+            ],
+            labelPosition: "right",
+          },
+          // 2x2グループ
+          {
+            layout: [
+              [0, 0],
+              [1, 1],
+              [2, 2],
+              [3, 3],
+            ],
+            labelPosition: "top",
+          },
+        ];
+
+        const selectedPattern = patterns[patternType];
+
+        let grid = selectedPattern.layout.map((row) =>
+          row.map((index) => ({
+            symbol: symbols[index],
+            hasAsterisk: false,
+            className: getClassName(symbols[index]),
+          }))
+        );
+
+        let allPositions = [];
+        for (let i = 0; i < grid.length; i++) {
+          for (let j = 0; j < grid[i].length; j++) {
+            allPositions.push([i, j]);
+          }
+        }
+
+        const jiPosition =
+          allPositions[Math.floor(Math.random() * allPositions.length)];
+        grid[jiPosition[0]][jiPosition[1]].symbol = "自";
+        grid[jiPosition[0]][jiPosition[1]].className = "";
+
+        allPositions = allPositions.sort(() => Math.random() - 0.5);
+        for (let i = 0; i < 6; i++) {
+          const [row, col] = allPositions[i];
+          grid[row][col].hasAsterisk = true;
+        }
+
+        let html = "";
+
+        if (patternType === 2) {
+          html += `<div class="label ${getLabelClass(
+            randomLabel
+          )}">${randomLabel}</div>`;
+        }
+
+        grid.forEach((row, i) => {
+          let rowHtml = '<div class="grid-row">';
+          if (i === 0 && patternType === 0) {
+            rowHtml += `<span class="label ${getLabelClass(
+              randomLabel
+            )}">${randomLabel}</span> `;
+          }
+          if (i === 1 && patternType === 0) {
+            rowHtml += `<span class="label"></span> `;
+          }
+          row.forEach((cell) => {
+            rowHtml += `<span class="symbol ${cell.className}">${cell.symbol}${
+              cell.hasAsterisk ? '<span class="orange">*</span>' : ""
+            }</span>`;
+          });
+          if (i === 0 && patternType === 1) {
+            rowHtml += ` <span class="label ${getLabelClass(
+              randomLabel
+            )}">${randomLabel}</span>`;
+          }
+          if (i === 1 && patternType === 1) {
+            rowHtml += `<span class="label"></span> `;
+          }
+          rowHtml += "</div>";
+          html += rowHtml;
+        });
+
+        return html;
+      }
+
+      function getClassName(symbol) {
+        switch (symbol) {
+          case "◯":
+            return "red";
+          case "☓":
+            return "blue";
+          case "▽":
+            return "green";
+          case "▢":
+            return "purple";
+          default:
+            return "";
+        }
+      }
+
+      function getLabelClass(label) {
+        switch (label) {
+          case "A":
+          case "1":
+            return "red";
+          case "B":
+          case "2":
+            return "yellow";
+          case "C":
+          case "3":
+            return "blue";
+          case "D":
+          case "4":
+            return "purple";
+          default:
+            return "";
+        }
+      }
+
+      function regenerateGrid() {
+        document.getElementById("gridDisplay").innerHTML = generateSymbolGrid();
+      }
+
+      // 初期表示
+      regenerateGrid();
+    </script>
+  </body>
+</html>
