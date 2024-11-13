@@ -28,7 +28,7 @@
       .label {
         width: 35px;
         margin: 0 4px;
-        -webkit-text-stroke: 0.5px #777;
+
       }
       button {
         background-color: #2563eb;
@@ -61,7 +61,6 @@
       }
       .red {
         color: red;
-        
       }
       .blue {
         color: blue;
@@ -74,6 +73,51 @@
       }
       .yellow {
         color: yellow;
+        -webkit-text-stroke: 0.5px #777;
+      }
+      .circle-container {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 50px auto;
+        border-radius: 50%;
+        border: 1px solid #000;
+      }
+      .circle-container div {
+        position: absolute;
+        transform: translate(-50%, -50%);
+      }
+      .a {
+        top: 15%;
+        left: 50%;
+      }
+      .b {
+        top: 50%;
+        right: 15%;
+      }
+      .c {
+        bottom: 15%;
+        left: 50%;
+      }
+      .d {
+        top: 50%;
+        left: 15%;
+      }
+      .one {
+        top: 25%;
+        left: 75%;
+      }
+      .two {
+        bottom: 25%;
+        right: 25%;
+      }
+      .three {
+        bottom: 25%;
+        left: 25%;
+      }
+      .four {
+        top: 25%;
+        left: 25%;
       }
     </style>
   </head>
@@ -83,6 +127,16 @@
         <div id="gridDisplay" class="grid"></div>
       </div>
       <button onclick="regenerateGrid()">新しいパターンを生成</button>
+    </div>
+    <div class="circle-container">
+      <div class="a red">A</div>
+      <div class="b yellow">B</div>
+      <div class="c blue">C</div>
+      <div class="d purple">D</div>
+      <div class="one red">1</div>
+      <div class="two yellow">2</div>
+      <div class="three blue">3</div>
+      <div class="four purple">4</div>
     </div>
 
     <script>
